@@ -202,8 +202,8 @@ def main_q3():
         train_acc_arr.append(train_acc)
         val_acc_arr.append(val_acc)
     plt.figure(2)
-    plt.plot(c_arr, train_acc_arr, label="Training accuracy")
-    plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
+    plt.plot(to_check, train_acc_arr, label="Training accuracy")
+    plt.plot(to_check, val_acc_arr, label="Validation accuracy")
     plt.xlabel("Number of examples")
     plt.ylabel("Accuracy")
     plt.xscale("log")
@@ -218,8 +218,34 @@ def main_q3():
 # Question 4: KFold CrossValid  #
 #################################
 
-def k_fold_cross_validation(X_train, Y_train, k):
-    return NotImplemented
+def k_fold_cross_validation(X_train, Y_train, k, n, kwargs):
+    # X_train, Y_train is already shuffled on partition.
+    if n == "ALL":
+        n = len(X_train) - 1
+    X_train = X_train[0: n]
+    Y_train = Y_train.T[0][0: n]
+    part_size = int(n / k)
+    train_arr = []
+    val_arr = []
+    for i in range(0, k):
+        if i == k - 1:
+            valid_X = X_train[(k-1) * part_size:]
+            valid_Y = Y_train[(k-1) * part_size:]
+            cut_X = X_train[0: (k-1) * part_size]
+            cut_Y = Y_train[0: (k-1) * part_size]
+        else:
+            valid_X = X_train[i * part_size: (i+1) * part_size]
+            valid_Y = Y_train[i * part_size: (i+1) * part_size]
+            cut_X = X_train[0: (i - 1) * part_size] + X_train[(i+1) * part_size:]
+            cut_Y = Y_train[0: (i - 1) * part_size] + Y_train[(i+1) * part_size:]
+        clf = train(cut_X, cut_Y, **kwargs)
+        train_acc = accuracy_score(clf.predict(cut_X), cut_Y)
+        val_acc = accuracy_score(clf.predict(valid_X), valid_Y)
+        train_arr.append(train_acc)
+        val_arr.append(val_acc)
+    return sum(train_arr) / len(train_arr), sum(val_arr) / len(val_arr)
+
+
 
 
 def main_q4():

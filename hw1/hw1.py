@@ -54,7 +54,7 @@ def main_q1():
     cifar10_raw = load_data("cifar10")
 
     # Set aside 10,000 validation for MNIST
-    mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 50000)
+    mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 10000)
 
     # Set aside 20% of the data for validation for spam
     spam_part = partition(spam_raw["training_data"], spam_raw["training_labels"], int(len(spam_raw["training_data"]) *
@@ -118,8 +118,8 @@ def main_q2():
     ARGS = [{}, {}, {}]
     for i, arr in enumerate(ALL_ARR):
         curr = PARTITIONS[i]
-        num_examples_experiment(PLT_NAMES[i], i, curr["training_data"], curr["training_labels"],
-                                curr["validation_data"], curr["validation_labels"], ALL_ARR[i])
+        num_examples_experiment(PLT_NAMES[i], i, curr["training_data"], curr["training_data"],
+                                curr["validation_data"], curr["validation_labels"], ALL_ARR[i], **ARGS[i])
     plt.show()
 
 
@@ -127,12 +127,35 @@ def main_q2():
 # Question 3: Hyperparameters   #
 #################################
 
-def hyperparameter_search(X_train, Y_train, X_val, Y_val, parameter_values):
-    return NotImplemented
-
-
 def main_q3():
-    return NotImplemented
+    MNIST_NUM_EXAMPLES = 10000
+    PARTITIONS = main_q1()
+    curr = PARTITIONS[0]
+    c_arr = [100, 10, 1.0, 0.1, 0.01]
+    train_acc_arr, val_acc_arr = [], []
+    for c in c_arr:
+        print(f"Testing with c value: {c}")
+        if MNIST_NUM_EXAMPLES == "ALL":
+            MNIST_NUM_EXAMPLES = len(curr["training_data"]) - 1
+        X_trainT = curr["training_data"][0: MNIST_NUM_EXAMPLES]
+        Y_trainT = curr["training_data"].T[0][0: MNIST_NUM_EXAMPLES]
+        clf = train(X_trainT, Y_trainT, C=c)
+        train_acc = accuracy_score(clf.predict(X_trainT), Y_trainT)
+        val_acc = accuracy_score(clf.predict(curr["validation_data"]), curr["validation_labels"].T[0])
+        train_acc_arr.append(train_acc)
+        val_acc_arr.append(val_acc)
+    plt.figure(1)
+    plt.legend()
+    plt.plot(c_arr, train_acc_arr, label="Training accuracy")
+    plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
+    plt.xlabel("Number of examples")
+    plt.ylabel("Accuracy")
+    plt.title("Coarse search for C values for MNIST.")
+    plt.savefig("Coarse MNIST C.pdf")
+
+    # From the coarse values, choose the best one, and then search around it.
+
+    plt.show()
 
 
 #################################

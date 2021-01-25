@@ -218,7 +218,7 @@ def main_q3():
 # Question 4: KFold CrossValid  #
 #################################
 
-def k_fold_cross_validation(X_train, Y_train, k, n, kwargs):
+def k_fold_cross_validation(X_train, Y_train, k, n, C):
     # X_train, Y_train is already shuffled on partition.
     if n == "ALL":
         n = len(X_train) - 1
@@ -229,16 +229,16 @@ def k_fold_cross_validation(X_train, Y_train, k, n, kwargs):
     val_arr = []
     for i in range(0, k):
         if i == k - 1:
-            valid_X = X_train[(k-1) * part_size:]
-            valid_Y = Y_train[(k-1) * part_size:]
-            cut_X = X_train[0: (k-1) * part_size]
-            cut_Y = Y_train[0: (k-1) * part_size]
+            valid_X = X_train[(k - 1) * part_size:]
+            valid_Y = Y_train[(k - 1) * part_size:]
+            cut_X = X_train[0: (k - 1) * part_size]
+            cut_Y = Y_train[0: (k - 1) * part_size]
         else:
-            valid_X = X_train[i * part_size: (i+1) * part_size]
-            valid_Y = Y_train[i * part_size: (i+1) * part_size]
-            cut_X = X_train[0: (i - 1) * part_size] + X_train[(i+1) * part_size:]
-            cut_Y = Y_train[0: (i - 1) * part_size] + Y_train[(i+1) * part_size:]
-        clf = train(cut_X, cut_Y, **kwargs)
+            valid_X = X_train[i * part_size: (i + 1) * part_size]
+            valid_Y = Y_train[i * part_size: (i + 1) * part_size]
+            cut_X = X_train[0: (i - 1) * part_size] + X_train[(i + 1) * part_size:]
+            cut_Y = Y_train[0: (i - 1) * part_size] + Y_train[(i + 1) * part_size:]
+        clf = train(cut_X, cut_Y, C=C)
         train_acc = accuracy_score(clf.predict(cut_X), cut_Y)
         val_acc = accuracy_score(clf.predict(valid_X), valid_Y)
         train_arr.append(train_acc)
@@ -246,10 +246,78 @@ def k_fold_cross_validation(X_train, Y_train, k, n, kwargs):
     return sum(train_arr) / len(train_arr), sum(val_arr) / len(val_arr)
 
 
-
-
 def main_q4():
-    return NotImplemented
+    curr = main_q1()[2]
+    SPAM_NUM_EXAMPLES = "ALL"
+    PARTITIONS = main_q1()
+    curr = PARTITIONS[2]
+    c_arr = [100, 10, 1.0, 0.1, 0.01]
+    train_acc_arr, val_acc_arr = [], []
+    for c in c_arr:
+        train_acc, val_acc = k_fold_cross_validation(curr["training_data"],
+                                                     curr["training_labels"], 5, len(curr["training_data"]),
+                                                     C=c)
+        train_acc_arr.append(train_acc)
+        val_acc_arr.append(val_acc)
+    plt.figure(1)
+    plt.plot(c_arr, train_acc_arr, label="Training accuracy")
+    plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
+    plt.xlabel("Number of examples")
+    plt.ylabel("Accuracy")
+    plt.xscale("log")
+    plt.title("Coarse search for C values for MNIST.")
+    plt.legend()
+    plt.savefig("Coarse spam C.pdf")
+
+    print("========")
+    # From the coarse values, choose the best one, and then search around it.
+    max_acc = max(val_acc_arr)
+    max_i = 0
+    for i, acc in enumerate(val_acc_arr):
+        if acc == max_acc:
+            max_i = i
+    best_c = c_arr[max_i]
+    print(f"BEST C: {best_c}")
+    if max_i != 0 and max_i != len(c_arr) - 1:
+        diff_l = (c_arr[max_i - 1] - c_arr[max_i]) / 4
+        diff_r = (c_arr[max_i] - c_arr[max_i + 1]) / 4
+        to_check = []
+        for i in range(1, 4):
+            to_check.append(best_c + i * diff_l)
+            to_check.append(best_c - i * diff_r)
+    elif max_i == 0:
+        diff = (best_c - c_arr[1]) / 4
+        to_check = []
+        for i in range(1, 4):
+            to_check.append(best_c + i * diff)
+            to_check.append(best_c - i * diff)
+    else:
+        diff = (c_arr[-2] - best_c) / 4
+        to_check = []
+        for i in range(1, 4):
+            to_check.append(best_c + i * diff)
+            to_check.append(best_c - i * diff)
+
+    train_acc_arr = []
+    val_acc_arr = []
+    to_check = [v for v in to_check if v >= 0]
+    for c in to_check:
+        train_acc, val_acc = k_fold_cross_validation(curr["training_data"],
+                                                     curr["training_labels"], 5, len(curr["training_data"]),
+                                                     C=c)
+        train_acc_arr.append(train_acc)
+        val_acc_arr.append(val_acc)
+    plt.figure(2)
+    plt.plot(to_check, train_acc_arr, label="Training accuracy")
+    plt.plot(to_check, val_acc_arr, label="Validation accuracy")
+    plt.xlabel("Number of examples")
+    plt.ylabel("Accuracy")
+    plt.xscale("log")
+    plt.title("Finer search for C values for spam.")
+    plt.legend()
+    plt.savefig("Fine spam C.pdf")
+
+    plt.show()
 
 
 #################################

@@ -1,0 +1,34 @@
+Testing with c value: 100
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.8975, VALIDATION ACCURACY: 0.7924
+Testing with c value: 10
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9508, VALIDATION ACCURACY: 0.8311
+Testing with c value: 1.0
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9505, VALIDATION ACCURACY: 0.83218
+Testing with c value: 0.1
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9253, VALIDATION ACCURACY: 0.81272
+Testing with c value: 0.01
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9615, VALIDATION ACCURACY: 0.8382
+========
+BEST C: 0.01
+Testing with c value: 0.0325
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9554, VALIDATION ACCURACY: 0.83636
+Testing with c value: 0.05500000000000001
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9265, VALIDATION ACCURACY: 0.81554
+Testing with c value: 0.0775
+C:\ProgramData\Anaconda3\lib\site-packages\sklearn\svm\_base.py:976: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  warnings.warn("Liblinear failed to converge, increase "
+TRAIN ACCURACY: 0.9534, VALIDATION ACCURACY: 0.82998

@@ -72,7 +72,7 @@ def main_q1():
 
 def train(X, Y, **kwargs):
     # create, train, and return and SVM Model
-    clf = svm.LinearSVC(max_iter=10000, **kwargs)
+    clf = svm.LinearSVC(max_iter=50000, **kwargs)
     clf.fit(X, Y)
     return clf
 
@@ -137,6 +137,7 @@ def hyperparameter_search(X, Y, X_val, Y_val, n, C):
     clf = train(X_trainT, Y_trainT, C=C)
     train_acc = accuracy_score(clf.predict(X_trainT), Y_trainT)
     val_acc = accuracy_score(clf.predict(X_val), Y_val.T[0])
+    print(f"TRAIN ACCURACY: {train_acc}, VALIDATION ACCURACY: {val_acc}")
     return train_acc, val_acc
 
 
@@ -153,15 +154,16 @@ def main_q3():
         train_acc_arr.append(train_acc)
         val_acc_arr.append(val_acc)
     plt.figure(1)
-    plt.legend()
     plt.plot(c_arr, train_acc_arr, label="Training accuracy")
     plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
     plt.xlabel("Number of examples")
     plt.ylabel("Accuracy")
     plt.xscale("log")
     plt.title("Coarse search for C values for MNIST.")
+    plt.legend()
     plt.savefig("Coarse MNIST C.pdf")
 
+    print("========")
     # From the coarse values, choose the best one, and then search around it.
     max_acc = max(val_acc_arr)
     max_i = 0
@@ -169,6 +171,7 @@ def main_q3():
         if acc == max_acc:
             max_i = i
     best_c = c_arr[max_i]
+    print(f"BEST C: {best_c}")
     if max_i != 0 and max_i != len(c_arr) - 1:
         diff_l = (c_arr[max_i - 1] - c_arr[max_i]) / 4
         diff_r = (c_arr[max_i] - c_arr[max_i + 1]) / 4
@@ -198,13 +201,13 @@ def main_q3():
         train_acc_arr.append(train_acc)
         val_acc_arr.append(val_acc)
     plt.figure(2)
-    plt.legend()
     plt.plot(c_arr, train_acc_arr, label="Training accuracy")
     plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
     plt.xlabel("Number of examples")
     plt.ylabel("Accuracy")
     plt.xscale("log")
     plt.title("Finer search for C values for MNIST.")
+    plt.legend()
     plt.savefig("Fine MNIST C.pdf")
 
     plt.show()

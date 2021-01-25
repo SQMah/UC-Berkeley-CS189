@@ -54,7 +54,7 @@ def main_q1():
     cifar10_raw = load_data("cifar10")
 
     # Set aside 10,000 validation for MNIST
-    mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 10000)
+    mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 50000)
 
     # Set aside 20% of the data for validation for spam
     spam_part = partition(spam_raw["training_data"], spam_raw["training_labels"], int(len(spam_raw["training_data"]) * 0.2))
@@ -71,7 +71,7 @@ def main_q1():
 
 def train(X, Y, **kwargs):
     # create, train, and return and SVM Model
-    clf = svm.LinearSVC(max_iter=10000, **kwargs)
+    clf = svm.LinearSVC(max_iter=50000, **kwargs)
     clf.fit(X, Y)
     return clf
 

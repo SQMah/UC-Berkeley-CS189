@@ -119,7 +119,7 @@ def main_q2():
     for i, arr in enumerate(ALL_ARR):
         curr = PARTITIONS[i]
         num_examples_experiment(PLT_NAMES[i], i, curr["training_data"], curr["training_data"],
-                                curr["validation_data"], curr["validation_labels"], ALL_ARR[i], **ARGS[i])
+                                curr["validation_data"], curr["validation_labels"], ALL_ARR[i])
     plt.show()
 
 

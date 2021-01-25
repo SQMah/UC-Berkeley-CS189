@@ -90,7 +90,7 @@ def num_examples_experiment(plot_name, fig_num, X_train, Y_train, X_val, Y_val, 
             num = len(X_train) - 1
         X_trainT = X_train[0: num]
         Y_trainT = Y_train.T[0][0: num]
-        clf = train(X_trainT, Y_trainT, **kwargs)
+        clf = train(X_trainT, Y_trainT)
         train_acc = accuracy_score(clf.predict(X_trainT), Y_trainT)
         val_acc = accuracy_score(clf.predict(X_val), Y_val.T[0])
         examples_arr.append(num)
@@ -99,6 +99,7 @@ def num_examples_experiment(plot_name, fig_num, X_train, Y_train, X_val, Y_val, 
     plt.figure(fig_num)
     plt.plot(examples_arr, train_acc_arr, label="Training accuracy")
     plt.plot(examples_arr, val_acc_arr, label="Validation accuracy")
+    plt.legend()
     plt.xlabel("Number of examples")
     plt.ylabel("Accuracy")
     plt.title(plot_name)

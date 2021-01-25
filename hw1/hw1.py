@@ -245,6 +245,8 @@ def k_fold_cross_validation(X_train, Y_train, k, n, C):
         val_acc = accuracy_score(clf.predict(valid_X), valid_Y)
         train_arr.append(train_acc)
         val_arr.append(val_acc)
+        print(f"TRAIN ACCURACY: {train_acc}, VALIDATION ACCURACY: {val_acc}")
+    print(f"AVG TRAIN: {sum(train_arr) / len(train_arr)}, AVG VAL: {sum(val_arr) / len(val_arr)}")
     return sum(train_arr) / len(train_arr), sum(val_arr) / len(val_arr)
 
 
@@ -271,7 +273,7 @@ def main_q4():
     plt.savefig("Coarse spam C.pdf")
 
     print("========")
-    
+
     # From the coarse values, choose the best one, and then search around it.
     max_acc = max(val_acc_arr)
     max_i = 0

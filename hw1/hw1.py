@@ -57,7 +57,8 @@ def main_q1():
     mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 50000)
 
     # Set aside 20% of the data for validation for spam
-    spam_part = partition(spam_raw["training_data"], spam_raw["training_labels"], int(len(spam_raw["training_data"]) * 0.2))
+    spam_part = partition(spam_raw["training_data"], spam_raw["training_labels"], int(len(spam_raw["training_data"]) *
+                                                                                      0.2))
 
     # Set aside 5000 images for CIFAR
     cifar10_part = partition(cifar10_raw["training_data"], cifar10_raw["training_labels"], 5000)

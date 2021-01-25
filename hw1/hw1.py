@@ -220,6 +220,7 @@ def main_q3():
 
 def k_fold_cross_validation(X_train, Y_train, k, n, C):
     # X_train, Y_train is already shuffled on partition.
+    print(f"Training model with C={C}")
     if n == "ALL":
         n = len(X_train) - 1
     X_train = X_train[0: n]
@@ -228,6 +229,7 @@ def k_fold_cross_validation(X_train, Y_train, k, n, C):
     train_arr = []
     val_arr = []
     for i in range(0, k):
+        print(f"Partition {i}")
         if i == k - 1:
             valid_X = X_train[(k - 1) * part_size:]
             valid_Y = Y_train[(k - 1) * part_size:]
@@ -248,7 +250,6 @@ def k_fold_cross_validation(X_train, Y_train, k, n, C):
 
 def main_q4():
     curr = main_q1()[2]
-    SPAM_NUM_EXAMPLES = "ALL"
     PARTITIONS = main_q1()
     curr = PARTITIONS[2]
     c_arr = [100, 10, 1.0, 0.1, 0.01]
@@ -270,6 +271,7 @@ def main_q4():
     plt.savefig("Coarse spam C.pdf")
 
     print("========")
+    
     # From the coarse values, choose the best one, and then search around it.
     max_acc = max(val_acc_arr)
     max_i = 0

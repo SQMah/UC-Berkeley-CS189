@@ -251,9 +251,7 @@ def k_fold_cross_validation(X_train, Y_train, k, n, C):
 
 
 def main_q4():
-    curr = main_q1()[2]
-    PARTITIONS = main_q1()
-    curr = PARTITIONS[2]
+    curr = main_q1()[1]
     c_arr = [100, 10, 1.0, 0.1, 0.01]
     train_acc_arr, val_acc_arr = [], []
     for c in c_arr:

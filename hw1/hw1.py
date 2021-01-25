@@ -128,6 +128,18 @@ def main_q2():
 # Question 3: Hyperparameters   #
 #################################
 
+def hyperparameter_search(X, Y, X_val, Y_val, n, C):
+    print(f"Testing with c value: {C}")
+    if n == "ALL":
+        n = len(X) - 1
+    X_trainT = X[0: n]
+    Y_trainT = Y.T[0][0: n]
+    clf = train(X_trainT, Y_trainT, C=C)
+    train_acc = accuracy_score(clf.predict(X_trainT), Y_trainT)
+    val_acc = accuracy_score(clf.predict(X_val), Y_val.T[0])
+    return train_acc, val_acc
+
+
 def main_q3():
     MNIST_NUM_EXAMPLES = 10000
     PARTITIONS = main_q1()
@@ -135,14 +147,9 @@ def main_q3():
     c_arr = [100, 10, 1.0, 0.1, 0.01]
     train_acc_arr, val_acc_arr = [], []
     for c in c_arr:
-        print(f"Testing with c value: {c}")
-        if MNIST_NUM_EXAMPLES == "ALL":
-            MNIST_NUM_EXAMPLES = len(curr["training_data"]) - 1
-        X_trainT = curr["training_data"][0: MNIST_NUM_EXAMPLES]
-        Y_trainT = curr["training_data"].T[0][0: MNIST_NUM_EXAMPLES]
-        clf = train(X_trainT, Y_trainT, C=c)
-        train_acc = accuracy_score(clf.predict(X_trainT), Y_trainT)
-        val_acc = accuracy_score(clf.predict(curr["validation_data"]), curr["validation_labels"].T[0])
+        train_acc, val_acc = hyperparameter_search(curr["training_data"],
+                                                   curr["training_labels"], curr["validation_data"],
+                                                   curr["validation_labels"], MNIST_NUM_EXAMPLES, c)
         train_acc_arr.append(train_acc)
         val_acc_arr.append(val_acc)
     plt.figure(1)
@@ -151,10 +158,54 @@ def main_q3():
     plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
     plt.xlabel("Number of examples")
     plt.ylabel("Accuracy")
+    plt.xscale("log")
     plt.title("Coarse search for C values for MNIST.")
     plt.savefig("Coarse MNIST C.pdf")
 
     # From the coarse values, choose the best one, and then search around it.
+    max_acc = max(val_acc_arr)
+    max_i = 0
+    for i, acc in enumerate(val_acc_arr):
+        if acc == max_acc:
+            max_i = i
+    best_c = c_arr[max_i]
+    if max_i != 0 and max_i != len(c_arr) - 1:
+        diff_l = (c_arr[max_i - 1] - c_arr[max_i]) / 4
+        diff_r = (c_arr[max_i] - c_arr[max_i + 1]) / 4
+        to_check = []
+        for i in range(1, 4):
+            to_check.append(best_c + i * diff_l)
+            to_check.append(best_c - i * diff_r)
+    elif max_i == 0:
+        diff = (best_c - c_arr[1]) / 4
+        to_check = []
+        for i in range(1, 4):
+            to_check.append(best_c + i * diff)
+            to_check.append(best_c - i * diff)
+    else:
+        diff = (c_arr[-2] - best_c) / 4
+        to_check = []
+        for i in range(1, 4):
+            to_check.append(best_c + i * diff)
+            to_check.append(best_c - i * diff)
+
+    train_acc_arr = []
+    val_acc_arr = []
+    for c in to_check:
+        train_acc, val_acc = hyperparameter_search(curr["training_data"],
+                                                   curr["training_labels"], curr["validation_data"],
+                                                   curr["validation_labels"], MNIST_NUM_EXAMPLES, c)
+        train_acc_arr.append(train_acc)
+        val_acc_arr.append(val_acc)
+    plt.figure(2)
+    plt.legend()
+    plt.plot(c_arr, train_acc_arr, label="Training accuracy")
+    plt.plot(c_arr, val_acc_arr, label="Validation accuracy")
+    plt.xlabel("Number of examples")
+    plt.ylabel("Accuracy")
+    plt.xscale("log")
+    plt.title("Finer search for C values for MNIST.")
+    plt.savefig("Fine MNIST C.pdf")
 
     plt.show()
 

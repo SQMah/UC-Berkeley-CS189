@@ -194,6 +194,7 @@ def main_q3():
 
     train_acc_arr = []
     val_acc_arr = []
+    to_check = [v for v in to_check if v >= 0]
     for c in to_check:
         train_acc, val_acc = hyperparameter_search(curr["training_data"],
                                                    curr["training_labels"], curr["validation_data"],

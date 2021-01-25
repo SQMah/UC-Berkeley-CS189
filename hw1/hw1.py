@@ -54,7 +54,7 @@ def main_q1():
     cifar10_raw = load_data("cifar10")
 
     # Set aside 10,000 validation for MNIST
-    mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 10000)
+    mnist_part = partition(mnist_raw["training_data"], mnist_raw["training_labels"], 50000)
 
     # Set aside 20% of the data for validation for spam
     spam_part = partition(spam_raw["training_data"], spam_raw["training_labels"], int(len(spam_raw["training_data"]) *
@@ -72,7 +72,7 @@ def main_q1():
 
 def train(X, Y, **kwargs):
     # create, train, and return and SVM Model
-    clf = svm.LinearSVC(max_iter=50000, **kwargs)
+    clf = svm.LinearSVC(max_iter=10000, **kwargs)
     clf.fit(X, Y)
     return clf
 
@@ -90,7 +90,7 @@ def num_examples_experiment(plot_name, fig_num, X_train, Y_train, X_val, Y_val, 
             num = len(X_train) - 1
         X_trainT = X_train[0: num]
         Y_trainT = Y_train.T[0][0: num]
-        clf = train(X_trainT, Y_trainT)
+        clf = train(X_trainT, Y_trainT, **kwargs)
         train_acc = accuracy_score(clf.predict(X_trainT), Y_trainT)
         val_acc = accuracy_score(clf.predict(X_val), Y_val.T[0])
         examples_arr.append(num)
@@ -99,9 +99,9 @@ def num_examples_experiment(plot_name, fig_num, X_train, Y_train, X_val, Y_val, 
     plt.figure(fig_num)
     plt.plot(examples_arr, train_acc_arr, label="Training accuracy")
     plt.plot(examples_arr, val_acc_arr, label="Validation accuracy")
-    plt.legend()
     plt.xlabel("Number of examples")
     plt.ylabel("Accuracy")
+    plt.legend()
     plt.title(plot_name)
     plt.savefig(plot_name + ".pdf")
 
@@ -119,7 +119,7 @@ def main_q2():
     ARGS = [{}, {}, {}]
     for i, arr in enumerate(ALL_ARR):
         curr = PARTITIONS[i]
-        num_examples_experiment(PLT_NAMES[i], i, curr["training_data"], curr["training_data"],
+        num_examples_experiment(PLT_NAMES[i], i, curr["training_data"], curr["training_labels"],
                                 curr["validation_data"], curr["validation_labels"], ALL_ARR[i])
     plt.show()
 

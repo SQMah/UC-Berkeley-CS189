@@ -122,11 +122,11 @@ class FullyConnected(Layer):
         self.n_in = X_shape[1]
 
         W = self.init_weights.__call__((self.n_in, self.n_out))
-        b = np.zeros()
+        b = self.init_weights.__call__((1, self.n_out))
 
         self.parameters = OrderedDict({"W": W, "b": b})
-        self.cache: OrderedDict = OrderedDict({i: 0.0 for i in range (self.n_in)})
-        self.gradients: OrderedDict = OrderedDict({k: 0.0 for k in self.parameters})
+        self.cache: OrderedDict = OrderedDict({"X": 0, "Z": 0})
+        self.gradients: OrderedDict = OrderedDict({k: np.zeros(self.parameters[k].shape) for k in self.parameters})
         # parameter gradients initialized to zero
         # MUST HAVE THE SAME KEYS AS `self.parameters`
 
@@ -148,13 +148,12 @@ class FullyConnected(Layer):
             self._init_parameters(X.shape)
 
         ### BEGIN YOUR CODE ###
-
         # perform an affine transformation and activation
-        out = ...
+        out = self.activation.forward(np.dot(X, self.parameters["W"]) + self.parameters["b"])
 
         # store information necessary for backprop in `self.cache`
-        for i in range(out):
-            self.cache[i] = out[i]
+        self.cache["Z"] = out
+        self.cache["X"] = np.copy(X)
 
         ### END YOUR CODE ###
 
@@ -178,13 +177,21 @@ class FullyConnected(Layer):
         shape (batch_size, input_dim)
         """
         ### BEGIN YOUR CODE ###
-
+        m = self.cache["X"].shape[0]
         # unpack the cache
+        dLdS = self.activation.backward(self.cache['Z'], dLdY)
 
         # compute the gradients of the loss w.r.t. all parameters as well as the
+        dLdW = np.dot(self.cache["X"].T, dLdS)
+        dLdb = np.sum(dLdS, axis=0, keepdims=True) / m
+
+        self.gradients["W"] = dLdW
+        self.gradients["b"] = dLdb
         # input of the layer
 
-        dX = ...
+        dX = np.dot(dLdS, self.parameters["W"].T)
+
+
 
         # store the gradients in `self.gradients`
         # the gradient for self.parameters["W"] should be stored in

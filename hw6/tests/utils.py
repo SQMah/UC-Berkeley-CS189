@@ -49,6 +49,7 @@ class LayerTest(unittest.TestCase):
                     layer.parameters["b"] = self.test_data[str(i) + "b"]    
             layer_output = layer.forward(*input_data)
             if mode == "forward":
+                print(layer_config)
                 assert_almost_equal(output_data, layer_output, decimal=4)
             elif mode == "backward":
                 if isinstance(layer, Activation):

@@ -20,6 +20,10 @@ class Activation(ABC):
     def forward(self, Z):
         pass
 
+    @abstractmethod
+    def backward(self, Z, dY):
+        pass
+
 
 def initialize_activation(name: str) -> Activation:
     """Factory method to return an Activation object of the specified type."""

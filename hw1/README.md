@@ -1,5 +1,3 @@
-SID: 3034146899
-NAME: Shao-Qian (SQ) Mah
 #Reproduction steps:
 - For MNIST:
 
